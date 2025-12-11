@@ -8,6 +8,7 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -18,11 +19,12 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-      
       - name: Build and push Docker image
         uses: docker/build-push-action@v4
         with:
-          context: ../..        # <-- remonte jusqu’à la racine depuis .github/zorflozs
-          file: ../../Dockerfile # <-- chemin vers Dockerfile
+          context: ../..        # depuis .github/zorflozs
+          file: ../../Dockerfile # chemin vers Dockerfile à la racine
           push: true
-          tags: ${{ secrets.DOCKERHUB_USERNAME }}/myapp:latest,${{ secrets.DOCKERHUB_USERNAME }}/myapp:${{ github.ref_name }}
+          tags: |
+            ${{ secrets.DOCKERHUB_USERNAME }}/myapp:latest
+            ${{ secrets.DOCKERHUB_USERNAME }}/myapp:${{ github.ref_name }}
