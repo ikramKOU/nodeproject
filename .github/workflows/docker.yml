@@ -3,12 +3,11 @@ name: Docker Build & Push
 on:
   push:
     tags:
-      - 'v*'
+      - 'v*.*.*'
 
 jobs:
   build:
     runs-on: ubuntu-latest
-
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -19,12 +18,15 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
+      - name: Extract tag name
+        id: vars
+        run: echo "TAG=${GITHUB_REF#refs/tags/}" >> $GITHUB_OUTPUT
+
       - name: Build and push Docker image
         uses: docker/build-push-action@v4
         with:
-          context: ../..        # depuis .github/zorflozs
-          file: ../../Dockerfile # chemin vers Dockerfile à la racine
+          context: .
           push: true
           tags: |
-            ${{ secrets.DOCKERHUB_USERNAME }}/myapp:latest
-            ${{ secrets.DOCKERHUB_USERNAME }}/myapp:${{ github.ref_name }}
+            ${{ secrets.DOCKERHUB_USERNAME }}/demo-app:${{ steps.vars.outputs.TAG }}
+            ${{ secrets.DOCKERHUB_USERNAME }}/demo-app:latest
