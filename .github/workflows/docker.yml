@@ -18,15 +18,11 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-      - name: Extract tag name
-        id: vars
-        run: echo "TAG=${GITHUB_REF#refs/tags/}" >> $GITHUB_OUTPUT
-
+      
       - name: Build and push Docker image
         uses: docker/build-push-action@v4
         with:
-          context: .
+          context: ../..        # <-- remonte jusqu’à la racine depuis .github/zorflozs
+          file: ../../Dockerfile # <-- chemin vers Dockerfile
           push: true
-          tags: |
-            ${{ secrets.DOCKERHUB_USERNAME }}/demo-app:${{ steps.vars.outputs.TAG }}
-            ${{ secrets.DOCKERHUB_USERNAME }}/demo-app:latest
+          tags: ${{ secrets.DOCKERHUB_USERNAME }}/myapp:latest,${{ secrets.DOCKERHUB_USERNAME }}/myapp:${{ github.ref_name }}
